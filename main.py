@@ -3,6 +3,7 @@ from flask import Flask
 from flask import jsonify
 from article import Article
 from article_preview import ArticlePreview
+from eventregistry_current import get_current_topics
 
 app = Flask(__name__)
 
@@ -19,6 +20,10 @@ def main_feed():
 def show_article(article_id):
 	# show article stuff here NO FUNCTIONALITY RIGHT NOW
 	return jsonify('wow')
+
+@app.route('/rough/current')
+def rough():
+	return str(get_current_topics())
 
 def main():
 	app.run()
