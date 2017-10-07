@@ -21,39 +21,44 @@ def get_current_topics():
 
 	res = er.format(ret)
 
-	first_topic = ret["org"]["trendingConcepts"][0]["label"]["eng"]
-
-	q = QueryArticles(keywords = first_topic)
-	res = er.execQuery(q)
-
 	results = []
-	articles = res["articles"]
-	count = articles["count"]
-	for i in range(count):
-		a = articles["results"][i]
-		if a["isDuplicate"] == True: 
-			continue
-		else: 
-			article_obj = Article()
-			article_obj["title"] = a["title"]
-			article_obj["date"] = a["date"]
-			article_obj["source"] = a["source"]["title"]
-			source_url = a["url"]
-			article_obj["source_url"] = source_url
 
-			d = get_article_data_goose(source_url)
-			article_obj["full_text"] = d["full_text"]
-			article_obj["desc_text"] = d["short_desc"]
-			if "image_url" in d:
-				article_obj["image_url"] = d["image_url"]
-			article_obj["tags"] = d["tags"]
-			article_obj["videos"] = d["videos"]
-			article_obj["refs"] = d["references"]
+	for i in range(10):
+		topic_label = ret["org"]["trendingConcepts"][i]["label"]["eng"]
+		q = QueryArticles(keywords = topic_label)
+		res = er.execQuery(q)
 
-			print(article_obj)
-			results.append(article_obj)
+		topic = {}
+		topic["label"] = topic_label
+		topic["articles"] = []
+		articles = res["articles"]
+		count = articles["count"]
+		for i in range(count):
+			a = articles["results"][i]
+			if a["isDuplicate"] == True: 
+				continue
+			else: 
+				article_obj = Article()
+				article_obj["title"] = a["title"]
+				print(a["title"])
+				article_obj["date"] = a["date"]
+				article_obj["source"] = a["source"]["title"]
+				source_url = a["url"]
+				article_obj["source_url"] = source_url
+
+				d = get_article_data_goose(source_url)
+				article_obj["full_text"] = d["full_text"]
+				article_obj["desc_text"] = d["short_desc"]
+				if "image_url" in d:
+					article_obj["image_url"] = d["image_url"]
+				article_obj["tags"] = d["tags"]
+				article_obj["videos"] = d["videos"]
+				article_obj["refs"] = d["references"]
+
+				# print(article_obj)
+				topic["articles"].append(article_obj)
+			results.append(topic)
 	return results
-
 
 if __name__ == "__main__":
 	print(get_current_topics())
