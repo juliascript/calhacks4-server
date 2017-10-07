@@ -2,6 +2,7 @@ from __future__ import print_function
 from eventregistry import * 
 from goose_scraper_news import get_article_data_goose
 from article import Article
+import base64
 
 def get_current_topics():
 	er = EventRegistry(apiKey="<APIKEY>")
@@ -36,21 +37,21 @@ def get_current_topics():
 			article_obj = Article()
 			article_obj["title"] = a["title"]
 			article_obj["date"] = a["date"]
-			full_text = a["body"]
-			article_obj["full_text"] = full_text
-			article_obj["desc_text"] = full_text[:250]
 			article_obj["source"] = a["source"]["title"]
 			source_url = a["url"]
 			article_obj["source_url"] = source_url
+
 			d = get_article_data_goose(source_url)
-			# article_obj["image"] = d["image"]
+			article_obj["full_text"] = d["full_text"]
+			article_obj["desc_text"] = d["short_desc"]
+			if "image_url" in d:
+				article_obj["image_url"] = d["image_url"]
 			article_obj["tags"] = d["tags"]
 			article_obj["videos"] = d["videos"]
 			article_obj["refs"] = d["references"]
 
 			print(article_obj)
 			results.append(article_obj)
-	print(results)
 	return results
 
 
