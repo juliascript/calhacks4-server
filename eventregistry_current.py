@@ -4,7 +4,7 @@ from goose_scraper_news import get_article_data_goose
 from article import Article
 
 def get_current_topics():
-	er = EventRegistry(apiKey="<INSERT API KEY>")
+	er = EventRegistry(apiKey="<APIKEY>")
 
 	# q = GetTrendingConcepts(source = "news", count = 10,
 	#     returnInfo = ReturnInfo(
@@ -30,24 +30,27 @@ def get_current_topics():
 	count = articles["count"]
 	for i in range(count):
 		a = articles["results"][i]
-		print(a["isDuplicate"])
 		if a["isDuplicate"] == True: 
 			continue
 		else: 
-			title = a["title"]
-			date = a["date"]
+			article_obj = Article()
+			article_obj["title"] = a["title"]
+			article_obj["date"] = a["date"]
 			full_text = a["body"]
-			desc_text = full_text[:250]
-			source = a["source"]["title"]
+			article_obj["full_text"] = full_text
+			article_obj["desc_text"] = full_text[:250]
+			article_obj["source"] = a["source"]["title"]
 			source_url = a["url"]
+			article_obj["source_url"] = source_url
 			d = get_article_data_goose(source_url)
-			image = d["image"]
-			tags = d["tags"]
-			videos = d["videos"]
-			refs = d["references"]
-	
-			a = Article(title, date, full_text, desc_text, source, source_url, tags, image, videos, refs)
-			results.append(a)
+			# article_obj["image"] = d["image"]
+			article_obj["tags"] = d["tags"]
+			article_obj["videos"] = d["videos"]
+			article_obj["refs"] = d["references"]
+
+			print(article_obj)
+			results.append(article_obj)
+	print(results)
 	return results
 
 

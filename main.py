@@ -23,7 +23,8 @@ def show_article(article_id):
 
 @app.route('/rough/current')
 def rough():
-	return str(get_current_topics())
+	results = get_current_topics()
+	return jsonify(results)
 
 def main():
 	app.run()
